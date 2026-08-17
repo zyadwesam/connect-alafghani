@@ -50,7 +50,8 @@ function AuthPage() {
     e.preventDefault();
     const clean = username.trim().toLowerCase();
     if (!/^[a-z0-9_]{3,20}$/.test(clean)) {
-      return toast.error("اسم المستخدم يجب أن يكون ٣-٢٠ حرفًا إنجليزيًا أو أرقامًا أو _");
+      toast.error("اسم المستخدم يجب أن يكون ٣-٢٠ حرفًا إنجليزيًا أو أرقامًا أو _");
+      return;
     }
     setLoading(true);
     const { data: exists } = await supabase
@@ -60,7 +61,8 @@ function AuthPage() {
       .maybeSingle();
     if (exists) {
       setLoading(false);
-      return toast.error("اسم المستخدم محجوز، جرّب اسمًا آخر");
+      toast.error("اسم المستخدم محجوز، جرّب اسمًا آخر");
+      return;
     }
     const { error } = await supabase.auth.signUp({
       email,
@@ -71,7 +73,10 @@ function AuthPage() {
       },
     });
     setLoading(false);
-    if (error) return toast.error("تعذّر إنشاء الحساب: " + error.message);
+    if (error) {
+      toast.error("تعذّر إنشاء الحساب: " + error.message);
+      return;
+    }
     toast.success("تم إنشاء الحساب! تفقّد بريدك لتأكيد الحساب إن طُلب منك ذلك.");
   };
 
