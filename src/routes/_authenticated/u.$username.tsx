@@ -250,13 +250,19 @@ function EditProfileDialog({ profile, onSaved }: { profile: Profile; onSaved: ()
     if (!user) return;
     setBusy(true);
     try {
-      const patch: Record<string, unknown> = {
+      const patch: {
+        full_name: string;
+        bio: string;
+        is_private: boolean;
+        avatar_url?: string;
+        cover_url?: string;
+      } = {
         full_name: fullName,
         bio,
         is_private: isPrivate,
       };
-      if (avatar) patch['avatar_url'] = await uploadMedia("avatars", user.id, avatar);
-      if (cover) patch['cover_url'] = await uploadMedia("covers", user.id, cover);
+      if (avatar) patch.avatar_url = await uploadMedia("avatars", user.id, avatar);
+      if (cover) patch.cover_url = await uploadMedia("covers", user.id, cover);
       const { error } = await supabase.from("profiles").update(patch).eq("user_id", user.id);
       if (error) throw error;
       toast.success("تم تحديث الملف الشخصي");

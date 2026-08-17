@@ -38,7 +38,10 @@ function AuthPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if (error) return toast.error("تعذّر تسجيل الدخول: " + error.message);
+    if (error) {
+      toast.error("تعذّر تسجيل الدخول: " + error.message);
+      return;
+    }
     toast.success("أهلًا بعودتك!");
     void navigate({ to: "/feed" });
   };
