@@ -10,33 +10,206 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
+import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
+import { Route as AuthenticatedReelsRouteImport } from './routes/_authenticated/reels'
+import { Route as AuthenticatedSearchRouteImport } from './routes/_authenticated/search'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedMessagesIndexRouteImport } from './routes/_authenticated/messages.index'
+import { Route as AuthenticatedMessagesIdRouteImport } from './routes/_authenticated/messages.$id'
+import { Route as AuthenticatedTagTagRouteImport } from './routes/_authenticated/tag.$tag'
+import { Route as AuthenticatedUUsernameRouteImport } from './routes/_authenticated/u.$username'
+import { Route as AuthenticatedUUsernameFollowersRouteImport } from './routes/_authenticated/u.$username.followers'
+import { Route as AuthenticatedUUsernameFollowingRouteImport } from './routes/_authenticated/u.$username.following'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedNotificationsRoute =
+  AuthenticatedNotificationsRouteImport.update({
+    id: '/notifications',
+    path: '/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReelsRoute = AuthenticatedReelsRouteImport.update({
+  id: '/reels',
+  path: '/reels',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSearchRoute = AuthenticatedSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMessagesIndexRoute =
+  AuthenticatedMessagesIndexRouteImport.update({
+    id: '/messages/',
+    path: '/messages/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMessagesIdRoute = AuthenticatedMessagesIdRouteImport.update({
+  id: '/messages/$id',
+  path: '/messages/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedTagTagRoute = AuthenticatedTagTagRouteImport.update({
+  id: '/tag/$tag',
+  path: '/tag/$tag',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedUUsernameRoute = AuthenticatedUUsernameRouteImport.update({
+  id: '/u/$username',
+  path: '/u/$username',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedUUsernameFollowersRoute =
+  AuthenticatedUUsernameFollowersRouteImport.update({
+    id: '/followers',
+    path: '/followers',
+    getParentRoute: () => AuthenticatedUUsernameRoute,
+  } as any)
+const AuthenticatedUUsernameFollowingRoute =
+  AuthenticatedUUsernameFollowingRouteImport.update({
+    id: '/following',
+    path: '/following',
+    getParentRoute: () => AuthenticatedUUsernameRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/feed': typeof AuthenticatedFeedRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/reels': typeof AuthenticatedReelsRoute
+  '/search': typeof AuthenticatedSearchRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/messages/$id': typeof AuthenticatedMessagesIdRoute
+  '/tag/$tag': typeof AuthenticatedTagTagRoute
+  '/u/$username': typeof AuthenticatedUUsernameRouteWithChildren
+  '/messages/': typeof AuthenticatedMessagesIndexRoute
+  '/u/$username/followers': typeof AuthenticatedUUsernameFollowersRoute
+  '/u/$username/following': typeof AuthenticatedUUsernameFollowingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/admin': typeof AuthenticatedAdminRoute
+  '/feed': typeof AuthenticatedFeedRoute
+  '/notifications': typeof AuthenticatedNotificationsRoute
+  '/reels': typeof AuthenticatedReelsRoute
+  '/search': typeof AuthenticatedSearchRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/messages/$id': typeof AuthenticatedMessagesIdRoute
+  '/tag/$tag': typeof AuthenticatedTagTagRoute
+  '/u/$username': typeof AuthenticatedUUsernameRouteWithChildren
+  '/messages': typeof AuthenticatedMessagesIndexRoute
+  '/u/$username/followers': typeof AuthenticatedUUsernameFollowersRoute
+  '/u/$username/following': typeof AuthenticatedUUsernameFollowingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/feed': typeof AuthenticatedFeedRoute
+  '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
+  '/_authenticated/reels': typeof AuthenticatedReelsRoute
+  '/_authenticated/search': typeof AuthenticatedSearchRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/messages/$id': typeof AuthenticatedMessagesIdRoute
+  '/_authenticated/tag/$tag': typeof AuthenticatedTagTagRoute
+  '/_authenticated/u/$username': typeof AuthenticatedUUsernameRouteWithChildren
+  '/_authenticated/messages/': typeof AuthenticatedMessagesIndexRoute
+  '/_authenticated/u/$username/followers': typeof AuthenticatedUUsernameFollowersRoute
+  '/_authenticated/u/$username/following': typeof AuthenticatedUUsernameFollowingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/feed'
+    | '/notifications'
+    | '/reels'
+    | '/search'
+    | '/settings'
+    | '/messages/$id'
+    | '/tag/$tag'
+    | '/u/$username'
+    | '/messages/'
+    | '/u/$username/followers'
+    | '/u/$username/following'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/feed'
+    | '/notifications'
+    | '/reels'
+    | '/search'
+    | '/settings'
+    | '/messages/$id'
+    | '/tag/$tag'
+    | '/u/$username'
+    | '/messages'
+    | '/u/$username/followers'
+    | '/u/$username/following'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/admin'
+    | '/_authenticated/feed'
+    | '/_authenticated/notifications'
+    | '/_authenticated/reels'
+    | '/_authenticated/search'
+    | '/_authenticated/settings'
+    | '/_authenticated/messages/$id'
+    | '/_authenticated/tag/$tag'
+    | '/_authenticated/u/$username'
+    | '/_authenticated/messages/'
+    | '/_authenticated/u/$username/followers'
+    | '/_authenticated/u/$username/following'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +221,156 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/feed': {
+      id: '/_authenticated/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof AuthenticatedFeedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/notifications': {
+      id: '/_authenticated/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof AuthenticatedNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reels': {
+      id: '/_authenticated/reels'
+      path: '/reels'
+      fullPath: '/reels'
+      preLoaderRoute: typeof AuthenticatedReelsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/search': {
+      id: '/_authenticated/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof AuthenticatedSearchRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messages/': {
+      id: '/_authenticated/messages/'
+      path: '/messages'
+      fullPath: '/messages/'
+      preLoaderRoute: typeof AuthenticatedMessagesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/messages/$id': {
+      id: '/_authenticated/messages/$id'
+      path: '/messages/$id'
+      fullPath: '/messages/$id'
+      preLoaderRoute: typeof AuthenticatedMessagesIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/tag/$tag': {
+      id: '/_authenticated/tag/$tag'
+      path: '/tag/$tag'
+      fullPath: '/tag/$tag'
+      preLoaderRoute: typeof AuthenticatedTagTagRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/u/$username': {
+      id: '/_authenticated/u/$username'
+      path: '/u/$username'
+      fullPath: '/u/$username'
+      preLoaderRoute: typeof AuthenticatedUUsernameRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/u/$username/followers': {
+      id: '/_authenticated/u/$username/followers'
+      path: '/followers'
+      fullPath: '/u/$username/followers'
+      preLoaderRoute: typeof AuthenticatedUUsernameFollowersRouteImport
+      parentRoute: typeof AuthenticatedUUsernameRoute
+    }
+    '/_authenticated/u/$username/following': {
+      id: '/_authenticated/u/$username/following'
+      path: '/following'
+      fullPath: '/u/$username/following'
+      preLoaderRoute: typeof AuthenticatedUUsernameFollowingRouteImport
+      parentRoute: typeof AuthenticatedUUsernameRoute
+    }
   }
 }
 
+interface AuthenticatedUUsernameRouteChildren {
+  AuthenticatedUUsernameFollowersRoute: typeof AuthenticatedUUsernameFollowersRoute
+  AuthenticatedUUsernameFollowingRoute: typeof AuthenticatedUUsernameFollowingRoute
+}
+
+const AuthenticatedUUsernameRouteChildren: AuthenticatedUUsernameRouteChildren =
+  {
+    AuthenticatedUUsernameFollowersRoute: AuthenticatedUUsernameFollowersRoute,
+    AuthenticatedUUsernameFollowingRoute: AuthenticatedUUsernameFollowingRoute,
+  }
+
+const AuthenticatedUUsernameRouteWithChildren =
+  AuthenticatedUUsernameRoute._addFileChildren(
+    AuthenticatedUUsernameRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
+  AuthenticatedNotificationsRoute: typeof AuthenticatedNotificationsRoute
+  AuthenticatedReelsRoute: typeof AuthenticatedReelsRoute
+  AuthenticatedSearchRoute: typeof AuthenticatedSearchRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedMessagesIdRoute: typeof AuthenticatedMessagesIdRoute
+  AuthenticatedTagTagRoute: typeof AuthenticatedTagTagRoute
+  AuthenticatedUUsernameRoute: typeof AuthenticatedUUsernameRouteWithChildren
+  AuthenticatedMessagesIndexRoute: typeof AuthenticatedMessagesIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedFeedRoute: AuthenticatedFeedRoute,
+  AuthenticatedNotificationsRoute: AuthenticatedNotificationsRoute,
+  AuthenticatedReelsRoute: AuthenticatedReelsRoute,
+  AuthenticatedSearchRoute: AuthenticatedSearchRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedMessagesIdRoute: AuthenticatedMessagesIdRoute,
+  AuthenticatedTagTagRoute: AuthenticatedTagTagRoute,
+  AuthenticatedUUsernameRoute: AuthenticatedUUsernameRouteWithChildren,
+  AuthenticatedMessagesIndexRoute: AuthenticatedMessagesIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
