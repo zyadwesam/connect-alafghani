@@ -22,7 +22,7 @@ export function StoriesBar() {
   const load = async () => {
     const { data } = await supabase
       .from("stories")
-      .select("*, profiles:profiles!stories_user_id_fkey(*)")
+      .select("*, profiles:profiles!stories_user_id_profiles_fkey(*)")
       .gt("expires_at", new Date().toISOString())
       .order("created_at", { ascending: true });
     const stories = (data as unknown as StoryWithAuthor[]) ?? [];

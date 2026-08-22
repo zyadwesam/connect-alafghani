@@ -32,7 +32,7 @@ export function CommentsDialog({
     setLoading(true);
     const { data } = await supabase
       .from("comments")
-      .select("*, profiles:profiles!comments_user_id_fkey(*)")
+      .select("*, profiles:profiles!comments_user_id_profiles_fkey(*)")
       .eq("post_id", postId)
       .order("created_at", { ascending: true });
     setComments((data as unknown as CommentWithAuthor[]) ?? []);

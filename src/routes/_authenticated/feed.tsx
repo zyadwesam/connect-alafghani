@@ -52,7 +52,7 @@ function FeedPage() {
 
       let query = supabase
         .from("posts")
-        .select("*, profiles:profiles!posts_user_id_fkey(*)")
+        .select("*, profiles:profiles!posts_user_id_profiles_fkey(*)")
         .order("created_at", { ascending: false })
         .range(offset, offset + PAGE - 1);
 
