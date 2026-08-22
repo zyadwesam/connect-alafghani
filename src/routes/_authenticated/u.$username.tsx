@@ -59,12 +59,12 @@ function ProfilePage() {
       const [{ data: postRows }, { data: reelRows }] = await Promise.all([
         supabase
           .from("posts")
-          .select("*, profiles:profiles!posts_user_id_fkey(*)")
+          .select("*, profiles:profiles!posts_user_id_profiles_fkey(*)")
           .eq("user_id", prof.user_id)
           .order("created_at", { ascending: false }),
         supabase
           .from("reels")
-          .select("*, profiles:profiles!reels_user_id_fkey(*)")
+          .select("*, profiles:profiles!reels_user_id_profiles_fkey(*)")
           .eq("user_id", prof.user_id)
           .order("created_at", { ascending: false }),
       ]);
@@ -80,7 +80,7 @@ function ProfilePage() {
         if (ids.length) {
           const { data: liked } = await supabase
             .from("posts")
-            .select("*, profiles:profiles!posts_user_id_fkey(*)")
+            .select("*, profiles:profiles!posts_user_id_profiles_fkey(*)")
             .in("id", ids)
             .order("created_at", { ascending: false });
           setLikedPosts((liked as unknown as PostWithAuthor[]) ?? []);
@@ -99,8 +99,12 @@ function ProfilePage() {
 
   const message = async () => {
     if (!user || !profile) return;
-    const id = await startConversation(user.id, profile.user_id);
-    void navigate({ to: "/messages/$id", params: { id } });
+    try {
+      const id = await startConversation(user.id, profile.user_id);
+      await navigate({ to: "/messages/$id", params: { id } });
+    } catch (e) {
+      toast.error("تعذّر فتح المحادثة: " + (e as Error).message);
+    }
   };
 
   if (loading) return <PostSkeleton />;

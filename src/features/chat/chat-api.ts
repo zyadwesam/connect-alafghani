@@ -28,10 +28,11 @@ export async function startConversation(meId: string, otherId: string): Promise<
     .single();
   if (error) throw error;
 
-  await supabase.from("conversation_participants").insert([
+  const { error: partsError } = await supabase.from("conversation_participants").insert([
     { conversation_id: conversation.id, user_id: meId },
     { conversation_id: conversation.id, user_id: otherId },
   ]);
+  if (partsError) throw partsError;
 
   return conversation.id;
 }

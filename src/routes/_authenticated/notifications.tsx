@@ -42,7 +42,7 @@ function NotificationsPage() {
     if (!user) return;
     const { data } = await supabase
       .from("notifications")
-      .select("*, actor:profiles!notifications_actor_id_fkey(*)")
+      .select("*, actor:profiles!notifications_actor_id_profiles_fkey(*)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(100);

@@ -35,7 +35,7 @@ function ReelsPage() {
   const load = async () => {
     const { data } = await supabase
       .from("reels")
-      .select("*, profiles:profiles!reels_user_id_fkey(*)")
+      .select("*, profiles:profiles!reels_user_id_profiles_fkey(*)")
       .order("created_at", { ascending: false })
       .limit(30);
     const rows = (data as unknown as ReelWithAuthor[]) ?? [];

@@ -48,7 +48,7 @@ function TagPage() {
     }
     const { data } = await supabase
       .from("posts")
-      .select("*, profiles:profiles!posts_user_id_fkey(*)")
+      .select("*, profiles:profiles!posts_user_id_profiles_fkey(*)")
       .in("id", ids)
       .order("created_at", { ascending: false });
     setPosts((data as unknown as PostWithAuthor[]) ?? []);
