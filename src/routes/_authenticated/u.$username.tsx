@@ -99,8 +99,12 @@ function ProfilePage() {
 
   const message = async () => {
     if (!user || !profile) return;
-    const id = await startConversation(user.id, profile.user_id);
-    void navigate({ to: "/messages/$id", params: { id } });
+    try {
+      const id = await startConversation(user.id, profile.user_id);
+      await navigate({ to: "/messages/$id", params: { id } });
+    } catch (e) {
+      toast.error("تعذّر فتح المحادثة: " + (e as Error).message);
+    }
   };
 
   if (loading) return <PostSkeleton />;
