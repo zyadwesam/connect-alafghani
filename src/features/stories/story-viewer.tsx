@@ -27,7 +27,7 @@ export function StoryViewer({
   const [progress, setProgress] = useState(0);
   const [viewers, setViewers] = useState<number>(0);
   const [reply, setReply] = useState("");
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
   const story = group.stories[index];
   const url = useSignedUrl(story?.media_url);
   const mine = group.userId === user?.id;
