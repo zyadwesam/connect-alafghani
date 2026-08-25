@@ -160,12 +160,25 @@ export function StoryViewer({
           {url ? (
             story.media_type === "video" ? (
               <video
+                ref={videoRef}
                 src={url}
                 autoPlay
                 muted={muted}
                 playsInline
                 controls={false}
                 className="max-h-full w-full object-contain"
+                onLoadedMetadata={() => {
+                  const video = videoRef.current;
+                  if (!video) return;
+                  const ms = Math.min(video.duration * 1000, MAX_VIDEO_DURATION);
+                  setDuration(ms);
+                }}
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onEnded={() => {
+                  if (index < group.stories.length - 1) setIndex(index + 1);
+                  else onClose();
+                }}
               />
             ) : (
               <img src={url} alt="ستوري" className="max-h-full w-full object-contain" />
