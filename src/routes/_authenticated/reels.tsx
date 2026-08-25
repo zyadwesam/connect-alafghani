@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Film, Heart, MessageCircle, Plus, Share2, UserPlus } from "lucide-react";
+import { Film, Heart, MessageCircle, Plus, Share2, Trash2, UserPlus, Volume2, VolumeX } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -90,6 +90,11 @@ function ReelItem({ reel, onChanged }: { reel: ReelWithAuthor; onChanged: () => 
   const [liked, setLiked] = useState(Boolean(reel.liked));
   const [likes, setLikes] = useState(reel.likes_count);
   const [counted, setCounted] = useState(false);
+  const [muted, setMuted] = useState(true);
+
+  useEffect(() => {
+    if (videoRef.current) videoRef.current.muted = muted;
+  }, [muted, url]);
 
   useEffect(() => {
     const el = videoRef.current;
@@ -154,7 +159,7 @@ function ReelItem({ reel, onChanged }: { reel: ReelWithAuthor; onChanged: () => 
           ref={videoRef}
           src={url}
           loop
-          muted
+          muted={muted}
           playsInline
           className="size-full object-contain"
           onClick={(e) => {
@@ -196,12 +201,36 @@ function ReelItem({ reel, onChanged }: { reel: ReelWithAuthor; onChanged: () => 
           <Share2 className="size-7" />
           مشاركة
         </button>
+        <button
+          onClick={() => setMuted((m) => !m)}
+          className="flex flex-col items-center text-xs"
+          aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
+        >
+          {muted ? <VolumeX className="size-7" /> : <Volume2 className="size-7" />}
+          {muted ? "الصوت" : "كتم"}
+        </button>
         {reel.user_id !== user?.id ? (
           <button onClick={follow} className="flex flex-col items-center text-xs">
             <UserPlus className="size-7" />
             متابعة
           </button>
-        ) : null}
+        ) : (
+          <button
+            onClick={async () => {
+              if (!window.confirm("حذف هذا الريل؟")) return;
+              const { error } = await supabase.from("reels").delete().eq("id", reel.id);
+              if (error) toast.error("تعذّر حذف الريل");
+              else {
+                toast.success("تم حذف الريل");
+                onChanged();
+              }
+            }}
+            className="flex flex-col items-center text-xs"
+          >
+            <Trash2 className="size-7" />
+            حذف
+          </button>
+        )}
       </div>
     </div>
   );
