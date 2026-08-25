@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Eye, Trash2, Volume2, VolumeX, X } from "lucide-react";
 import { toast } from "sonner";
@@ -12,7 +12,8 @@ import { startConversation } from "@/features/chat/chat-api";
 import { timeAgo } from "@/lib/format";
 import type { StoryWithAuthor } from "@/lib/types";
 
-const DURATION = 5000;
+const IMAGE_DURATION = 5000;
+const MAX_VIDEO_DURATION = 60000;
 
 export function StoryViewer({
   group,
