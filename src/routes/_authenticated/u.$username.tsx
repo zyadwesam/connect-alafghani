@@ -199,8 +199,37 @@ function ProfilePage() {
           ) : (
             <div className="grid grid-cols-3 gap-2">
               {reels.map((r) => (
-                <div key={r.id} className="aspect-[9/16] overflow-hidden rounded-xl bg-muted">
-                  <MediaImage src={r.thumbnail_url} alt="ريل" className="size-full object-cover" />
+                <div key={r.id} className="relative aspect-[9/16] overflow-hidden rounded-xl bg-muted">
+                  {r.thumbnail_url ? (
+                    <MediaImage src={r.thumbnail_url} alt="ريل" className="size-full object-cover" />
+                  ) : (
+                    <MediaVideo
+                      src={r.video_url}
+                      muted
+                      playsInline
+                      preload="metadata"
+                      controls
+                      className="size-full object-cover"
+                    />
+                  )}
+                  {mine ? (
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      className="absolute end-1 top-1 size-7"
+                      aria-label="حذف الريل"
+                      onClick={async () => {
+                        const { error } = await supabase.from("reels").delete().eq("id", r.id);
+                        if (error) toast.error("تعذّر حذف الريل");
+                        else {
+                          toast.success("تم حذف الريل");
+                          void load();
+                        }
+                      }}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  ) : null}
                 </div>
               ))}
             </div>
