@@ -137,16 +137,23 @@ function ChatPage() {
   const other = participants.find((p) => p.user_id !== user?.id);
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] flex-col rounded-2xl border bg-card">
-      <header className="flex items-center gap-3 border-b p-3">
+    <div className="fixed inset-0 z-50 flex flex-col bg-background md:static md:z-auto md:h-[calc(100vh-8rem)] md:rounded-2xl md:border md:bg-card">
+      <header className="flex items-center gap-2 border-b bg-card/95 p-2 backdrop-blur md:gap-3 md:p-3">
+        <Link to="/messages" className="md:hidden">
+          <Button variant="ghost" size="icon" aria-label="رجوع">
+            <ChevronRight className="size-5" />
+          </Button>
+        </Link>
         <UserAvatar src={other?.avatar_url} name={other?.full_name} className="size-10" />
-        <div>
-          <p className="text-sm font-bold">{other?.full_name || other?.username || "محادثة"}</p>
-          <p className="h-4 text-xs text-muted-foreground">{typing ? `${typing} يكتب...` : ""}</p>
+        <div className="min-w-0">
+          <p className="truncate text-sm font-bold">
+            {other?.full_name || other?.username || "محادثة"}
+          </p>
+          <p className="h-4 truncate text-xs text-primary">{typing ? `${typing} يكتب...` : ""}</p>
         </div>
       </header>
 
-      <div className="flex-1 space-y-2 overflow-y-auto p-3">
+      <div className="flex-1 space-y-2 overflow-y-auto overscroll-contain p-3">
         {loading ? (
           <>
             <Skeleton className="h-10 w-40 rounded-2xl" />
