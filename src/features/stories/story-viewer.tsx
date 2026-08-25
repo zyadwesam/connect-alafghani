@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, Eye, Trash2, Volume2, VolumeX, X } from "lucide-react";
 import { toast } from "sonner";
@@ -12,7 +12,8 @@ import { startConversation } from "@/features/chat/chat-api";
 import { timeAgo } from "@/lib/format";
 import type { StoryWithAuthor } from "@/lib/types";
 
-const DURATION = 5000;
+const IMAGE_DURATION = 5000;
+const MAX_VIDEO_DURATION = 60000;
 
 export function StoryViewer({
   group,
@@ -28,6 +29,10 @@ export function StoryViewer({
   const [viewers, setViewers] = useState<number>(0);
   const [reply, setReply] = useState("");
   const [muted, setMuted] = useState(true);
+  const [duration, setDuration] = useState(IMAGE_DURATION);
+  const [playing, setPlaying] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const startedRef = useRef(Date.now());
   const story = group.stories[index];
   const url = useSignedUrl(story?.media_url);
   const mine = group.userId === user?.id;
@@ -49,18 +54,37 @@ export function StoryViewer({
 
   useEffect(() => {
     setProgress(0);
-    const started = Date.now();
-    const timer = setInterval(() => {
-      const pct = Math.min(((Date.now() - started) / DURATION) * 100, 100);
-      setProgress(pct);
-      if (pct >= 100) {
-        clearInterval(timer);
-        if (index < group.stories.length - 1) setIndex(index + 1);
-        else onClose();
+    startedRef.current = Date.now();
+    setDuration(story?.media_type === "image" ? IMAGE_DURATION : IMAGE_DURATION);
+    setPlaying(true);
+  }, [index, story?.media_type]);
+
+  useEffect(() => {
+    if (!story) return;
+    let raf = 0;
+    const tick = () => {
+      if (story.media_type === "video" && videoRef.current) {
+        const currentMs = videoRef.current.currentTime * 1000;
+        setProgress(Math.min((currentMs / duration) * 100, 100));
+        if (currentMs >= duration) {
+          if (index < group.stories.length - 1) setIndex(index + 1);
+          else onClose();
+          return;
+        }
+      } else {
+        const elapsed = Date.now() - startedRef.current;
+        setProgress(Math.min((elapsed / duration) * 100, 100));
+        if (elapsed >= duration) {
+          if (index < group.stories.length - 1) setIndex(index + 1);
+          else onClose();
+          return;
+        }
       }
-    }, 50);
-    return () => clearInterval(timer);
-  }, [index, group.stories.length, onClose]);
+      raf = requestAnimationFrame(tick);
+    };
+    if (playing) raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [playing, duration, index, group.stories.length, onClose, story]);
 
   if (!story) return null;
 
@@ -136,12 +160,25 @@ export function StoryViewer({
           {url ? (
             story.media_type === "video" ? (
               <video
+                ref={videoRef}
                 src={url}
                 autoPlay
                 muted={muted}
                 playsInline
                 controls={false}
                 className="max-h-full w-full object-contain"
+                onLoadedMetadata={() => {
+                  const video = videoRef.current;
+                  if (!video) return;
+                  const ms = Math.min(video.duration * 1000, MAX_VIDEO_DURATION);
+                  setDuration(ms);
+                }}
+                onPlay={() => setPlaying(true)}
+                onPause={() => setPlaying(false)}
+                onEnded={() => {
+                  if (index < group.stories.length - 1) setIndex(index + 1);
+                  else onClose();
+                }}
               />
             ) : (
               <img src={url} alt="ستوري" className="max-h-full w-full object-contain" />
