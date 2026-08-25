@@ -1,15 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Camera, Lock, MessageCircle, Newspaper, ShieldCheck } from "lucide-react";
+import { Camera, Lock, MessageCircle, Newspaper, ShieldCheck, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { uploadMedia } from "@/lib/media";
 import { useSignedUrl } from "@/hooks/use-signed-url";
 import { UserAvatar } from "@/components/user-avatar";
-import { MediaImage } from "@/components/media-image";
+import { MediaImage, MediaVideo } from "@/components/media-image";
 import { PostCard } from "@/features/feed/post-card";
 import { FollowButton } from "@/components/follow-button";
+import { BlockButton } from "@/components/block-button";
 import { EmptyState } from "@/components/empty-state";
 import { PostSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
@@ -147,6 +148,7 @@ function ProfilePage() {
                   <Button size="sm" variant="outline" onClick={message}>
                     <MessageCircle className="size-4" /> مراسلة
                   </Button>
+                  <BlockButton targetId={profile.user_id} onChanged={load} />
                 </>
               )}
             </div>
