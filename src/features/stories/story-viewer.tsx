@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, Eye, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Trash2, Volume2, VolumeX, X } from "lucide-react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { useSignedUrl } from "@/hooks/use-signed-url";
@@ -26,6 +27,7 @@ export function StoryViewer({
   const [progress, setProgress] = useState(0);
   const [viewers, setViewers] = useState<number>(0);
   const [reply, setReply] = useState("");
+  const [muted, setMuted] = useState(true);
   const story = group.stories[index];
   const url = useSignedUrl(story?.media_url);
   const mine = group.userId === user?.id;
@@ -99,6 +101,32 @@ export function StoryViewer({
             <p className="text-sm font-bold">{story.profiles?.full_name || story.profiles?.username}</p>
             <p className="text-[11px] opacity-75">{timeAgo(story.created_at)}</p>
           </div>
+          {story.media_type === "video" ? (
+            <button
+              onClick={() => setMuted((m) => !m)}
+              aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
+              className="me-1"
+            >
+              {muted ? <VolumeX className="size-5" /> : <Volume2 className="size-5" />}
+            </button>
+          ) : null}
+          {mine ? (
+            <button
+              aria-label="حذف الستوري"
+              className="me-1"
+              onClick={async () => {
+                if (!window.confirm("حذف هذا الستوري؟")) return;
+                const { error } = await supabase.from("stories").delete().eq("id", story.id);
+                if (error) toast.error("تعذّر حذف الستوري");
+                else {
+                  toast.success("تم حذف الستوري");
+                  onClose();
+                }
+              }}
+            >
+              <Trash2 className="size-5" />
+            </button>
+          ) : null}
           <button onClick={onClose} aria-label="إغلاق">
             <X className="size-6" />
           </button>
@@ -107,7 +135,14 @@ export function StoryViewer({
         <div className="relative mt-3 flex flex-1 items-center justify-center overflow-hidden rounded-2xl bg-black">
           {url ? (
             story.media_type === "video" ? (
-              <video src={url} autoPlay muted playsInline className="max-h-full w-full object-contain" />
+              <video
+                src={url}
+                autoPlay
+                muted={muted}
+                playsInline
+                controls={false}
+                className="max-h-full w-full object-contain"
+              />
             ) : (
               <img src={url} alt="ستوري" className="max-h-full w-full object-contain" />
             )

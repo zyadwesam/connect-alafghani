@@ -1,15 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Camera, Lock, MessageCircle, Newspaper, ShieldCheck } from "lucide-react";
+import { Camera, Lock, MessageCircle, Newspaper, ShieldCheck, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { uploadMedia } from "@/lib/media";
 import { useSignedUrl } from "@/hooks/use-signed-url";
 import { UserAvatar } from "@/components/user-avatar";
-import { MediaImage } from "@/components/media-image";
+import { MediaImage, MediaVideo } from "@/components/media-image";
 import { PostCard } from "@/features/feed/post-card";
 import { FollowButton } from "@/components/follow-button";
+import { BlockButton } from "@/components/block-button";
 import { EmptyState } from "@/components/empty-state";
 import { PostSkeleton } from "@/components/skeletons";
 import { Button } from "@/components/ui/button";
@@ -147,6 +148,7 @@ function ProfilePage() {
                   <Button size="sm" variant="outline" onClick={message}>
                     <MessageCircle className="size-4" /> مراسلة
                   </Button>
+                  <BlockButton targetId={profile.user_id} onChanged={load} />
                 </>
               )}
             </div>
@@ -199,8 +201,37 @@ function ProfilePage() {
           ) : (
             <div className="grid grid-cols-3 gap-2">
               {reels.map((r) => (
-                <div key={r.id} className="aspect-[9/16] overflow-hidden rounded-xl bg-muted">
-                  <MediaImage src={r.thumbnail_url} alt="ريل" className="size-full object-cover" />
+                <div key={r.id} className="relative aspect-[9/16] overflow-hidden rounded-xl bg-muted">
+                  {r.thumbnail_url ? (
+                    <MediaImage src={r.thumbnail_url} alt="ريل" className="size-full object-cover" />
+                  ) : (
+                    <MediaVideo
+                      src={r.video_url}
+                      muted
+                      playsInline
+                      preload="metadata"
+                      controls
+                      className="size-full object-cover"
+                    />
+                  )}
+                  {mine ? (
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      className="absolute end-1 top-1 size-7"
+                      aria-label="حذف الريل"
+                      onClick={async () => {
+                        const { error } = await supabase.from("reels").delete().eq("id", r.id);
+                        if (error) toast.error("تعذّر حذف الريل");
+                        else {
+                          toast.success("تم حذف الريل");
+                          void load();
+                        }
+                      }}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  ) : null}
                 </div>
               ))}
             </div>
