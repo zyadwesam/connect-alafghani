@@ -118,8 +118,8 @@ function MessagesPage() {
   }, [user?.id]);
 
   return (
-    <div className="space-y-3">
-      <h1 className="text-xl font-extrabold">الرسائل</h1>
+    <div className="space-y-2 md:space-y-3">
+      <h1 className="px-1 text-xl font-extrabold">الرسائل</h1>
       {loading ? (
         <>
           <RowSkeleton />
