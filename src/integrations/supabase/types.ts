@@ -428,6 +428,7 @@ export type Database = {
           is_private: boolean
           is_suspended: boolean
           is_verified: boolean
+          last_seen_at: string
           posts_count: number
           user_id: string
           username: string
@@ -445,6 +446,7 @@ export type Database = {
           is_private?: boolean
           is_suspended?: boolean
           is_verified?: boolean
+          last_seen_at?: string
           posts_count?: number
           user_id: string
           username: string
@@ -462,6 +464,7 @@ export type Database = {
           is_private?: boolean
           is_suspended?: boolean
           is_verified?: boolean
+          last_seen_at?: string
           posts_count?: number
           user_id?: string
           username?: string
