@@ -197,7 +197,7 @@ function ChatPage() {
         <div ref={bottom} />
       </div>
 
-      <div className="flex items-center gap-2 border-t p-3">
+      <div className="flex items-center gap-1.5 border-t bg-card/95 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur md:gap-2 md:p-3">
         <input
           ref={fileInput}
           type="file"
@@ -205,11 +205,18 @@ function ChatPage() {
           hidden
           onChange={(e) => void upload(e.target.files?.[0])}
         />
-        <Button variant="ghost" size="icon" onClick={() => fileInput.current?.click()} aria-label="إرفاق">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="shrink-0"
+          onClick={() => fileInput.current?.click()}
+          aria-label="إرفاق"
+        >
           <ImagePlus className="size-5" />
         </Button>
         <Input
           value={text}
+          className="h-11 min-w-0 flex-1 rounded-full bg-muted/60 text-base"
           onChange={(e) => {
             setText(e.target.value);
             onTyping();
@@ -219,7 +226,7 @@ function ChatPage() {
           }}
           placeholder="اكتب رسالة..."
         />
-        <Button size="icon" onClick={() => void send()} aria-label="إرسال">
+        <Button size="icon" className="size-11 shrink-0 rounded-full" onClick={() => void send()} aria-label="إرسال">
           <Send className="size-4" />
         </Button>
       </div>
