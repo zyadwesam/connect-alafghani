@@ -169,8 +169,10 @@ function ChatPage() {
             return (
               <div key={m.id} className={mine ? "flex justify-start" : "flex justify-end"}>
                 <div
-                  className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
-                    mine ? "bg-primary text-primary-foreground" : "bg-muted"
+                  className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed shadow-sm sm:max-w-[70%] ${
+                    mine
+                      ? "rounded-ss-md bg-primary text-primary-foreground"
+                      : "rounded-se-md bg-muted"
                   }`}
                 >
                   {m.media_url ? (
