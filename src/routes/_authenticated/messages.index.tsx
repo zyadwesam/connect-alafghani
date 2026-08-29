@@ -137,23 +137,29 @@ function MessagesPage() {
             key={row.id}
             to="/messages/$id"
             params={{ id: row.id }}
-            className="flex items-center gap-3 rounded-xl border bg-card p-3 transition-colors hover:bg-accent/40"
+            className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border bg-card p-3 transition-colors active:bg-accent/60 hover:bg-accent/40"
           >
-            <UserAvatar src={row.avatar} name={row.title} className="size-11" />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold">{row.title}</p>
-              <p className="truncate text-xs text-muted-foreground">
-                {row.lastMessage?.content ?? "لا توجد رسائل بعد"}
+            <UserAvatar src={row.avatar} name={row.title} className="size-14 shrink-0 md:size-12" />
+            <div className="min-w-0">
+              <p className="truncate text-[15px] font-bold">{row.title}</p>
+              <p
+                className={`truncate text-xs ${
+                  row.unread > 0 ? "font-semibold text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                {row.lastMessage?.media_url
+                  ? "📎 مرفق"
+                  : (row.lastMessage?.content ?? "لا توجد رسائل بعد")}
               </p>
             </div>
-            <div className="flex flex-col items-end gap-1">
+            <div className="flex shrink-0 flex-col items-end gap-1.5">
               {row.lastMessage ? (
                 <span className="text-[11px] text-muted-foreground">
                   {timeAgo(row.lastMessage.created_at)}
                 </span>
               ) : null}
               {row.unread > 0 ? (
-                <span className="rounded-full bg-primary px-2 text-[11px] font-bold text-primary-foreground">
+                <span className="grid min-w-5 place-items-center rounded-full bg-primary px-1.5 py-0.5 text-[11px] font-bold text-primary-foreground">
                   {row.unread}
                 </span>
               ) : null}
