@@ -139,3 +139,42 @@
     display: none;
   }
 }
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
+  }
+
+  /* منع تكبير الصفحة تلقائيًا عند الكتابة على iOS */
+  @media (max-width: 767px) {
+    input,
+    textarea,
+    select {
+      font-size: 16px;
+    }
+  }
+
+  button,
+  a,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+  }
+}
+
+@utility safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility safe-top {
+  padding-top: env(safe-area-inset-top);
+}
