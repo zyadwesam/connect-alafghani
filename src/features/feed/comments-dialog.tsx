@@ -148,7 +148,9 @@ export function CommentsDialog({
             <button onClick={() => toggleLike(c.id)} className="flex items-center gap-1">
               <Heart
                 className={
-                  likedIds.includes(c.id) ? "size-3.5 fill-[var(--like)] text-[var(--like)]" : "size-3.5"
+                  likedIds.includes(c.id)
+                    ? "size-3.5 fill-[var(--like)] text-[var(--like)]"
+                    : "size-3.5"
                 }
               />
               {c.likes_count}
@@ -156,7 +158,12 @@ export function CommentsDialog({
             <button
               onClick={() => {
                 setReplyTo(c);
-                if (c.profiles?.username) setText((prev) => (prev.includes(`@${c.profiles!.username}`) ? prev : `@${c.profiles!.username} ${prev}`));
+                if (c.profiles?.username)
+                  setText((prev) =>
+                    prev.includes(`@${c.profiles!.username}`)
+                      ? prev
+                      : `@${c.profiles!.username} ${prev}`,
+                  );
               }}
             >
               رد

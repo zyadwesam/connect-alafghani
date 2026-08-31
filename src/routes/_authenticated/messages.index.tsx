@@ -40,7 +40,9 @@ function MessagesPage() {
     if (!user) return;
     const { data: parts } = await supabase
       .from("conversation_participants")
-      .select("conversation_id, last_read_at, conversations!inner(id, is_group, group_name, group_avatar_url, last_message_at)")
+      .select(
+        "conversation_id, last_read_at, conversations!inner(id, is_group, group_name, group_avatar_url, last_message_at)",
+      )
       .eq("user_id", user.id);
 
     const list: Row[] = [];
@@ -113,7 +115,11 @@ function MessagesPage() {
     if (!user) return;
     const channel = supabase
       .channel("messages-list")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => void load())
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        () => void load(),
+      )
       .subscribe();
     return () => {
       void supabase.removeChannel(channel);
@@ -154,7 +160,9 @@ function MessagesPage() {
               {!row.isGroup ? (
                 <p
                   className={`truncate text-[11px] ${
-                    isOnline(row.lastSeen) ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
+                    isOnline(row.lastSeen)
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-muted-foreground"
                   }`}
                 >
                   {presenceLabel(row.lastSeen)}

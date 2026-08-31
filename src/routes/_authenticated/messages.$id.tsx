@@ -79,7 +79,12 @@ function ChatPage() {
       .channel(`conversation-${id}`, { config: { presence: { key: user.id } } })
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${id}` },
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${id}`,
+        },
         (payload) => setMessages((prev) => [...prev, payload.new as Message]),
       )
       .on("broadcast", { event: "typing" }, ({ payload }) => {
@@ -96,7 +101,10 @@ function ChatPage() {
     };
   }, [id, user]);
 
-  const participantIds = participants.map((p) => p.user_id).sort().join(",");
+  const participantIds = participants
+    .map((p) => p.user_id)
+    .sort()
+    .join(",");
 
   useEffect(() => {
     if (!user) return;
@@ -256,7 +264,12 @@ function ChatPage() {
           }}
           placeholder="اكتب رسالة..."
         />
-        <Button size="icon" className="size-11 shrink-0 rounded-full" onClick={() => void send()} aria-label="إرسال">
+        <Button
+          size="icon"
+          className="size-11 shrink-0 rounded-full"
+          onClick={() => void send()}
+          aria-label="إرسال"
+        >
           <Send className="size-4" />
         </Button>
       </div>
