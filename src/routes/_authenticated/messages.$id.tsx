@@ -10,6 +10,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { presenceLabel, isOnline } from "@/lib/format";
 import type { Message, Profile } from "@/lib/types";
 
 export const Route = createFileRoute("/_authenticated/messages/$id")({
@@ -96,6 +97,18 @@ function ChatPage() {
   }, [id, user]);
 
   useEffect(() => {
+    if (!user) return;
+    const refresh = async () => {
+      const ids = participants.map((p) => p.user_id);
+      if (!ids.length) return;
+      const { data } = await supabase.from("profiles").select("*").in("user_id", ids);
+      if (data) setParticipants(data);
+    };
+    const timer = setInterval(() => void refresh(), 45_000);
+    return () => clearInterval(timer);
+  }, [user, participants]);
+
+  useEffect(() => {
     bottom.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
 
@@ -144,12 +157,27 @@ function ChatPage() {
             <ChevronRight className="size-5" />
           </Button>
         </Link>
-        <UserAvatar src={other?.avatar_url} name={other?.full_name} className="size-10" />
+        <div className="relative shrink-0">
+          <UserAvatar src={other?.avatar_url} name={other?.full_name} className="size-10" />
+          {isOnline(other?.last_seen_at) ? (
+            <span className="absolute bottom-0 end-0 size-3 rounded-full border-2 border-card bg-emerald-500" />
+          ) : null}
+        </div>
         <div className="min-w-0">
           <p className="truncate text-sm font-bold">
             {other?.full_name || other?.username || "محادثة"}
           </p>
-          <p className="h-4 truncate text-xs text-primary">{typing ? `${typing} يكتب...` : ""}</p>
+          <p
+            className={`h-4 truncate text-xs ${
+              typing
+                ? "text-primary"
+                : isOnline(other?.last_seen_at)
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : "text-muted-foreground"
+            }`}
+          >
+            {typing ? `${typing} يكتب...` : other ? presenceLabel(other.last_seen_at) : ""}
+          </p>
         </div>
       </header>
 
