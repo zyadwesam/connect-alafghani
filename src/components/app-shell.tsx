@@ -60,6 +60,24 @@ export function AppShell({ children }: { children: ReactNode }) {
     };
   }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+    const ping = () => {
+      if (document.visibilityState !== "visible") return;
+      void supabase
+        .from("profiles")
+        .update({ last_seen_at: new Date().toISOString() })
+        .eq("user_id", user.id);
+    };
+    ping();
+    const timer = setInterval(ping, 60_000);
+    document.addEventListener("visibilitychange", ping);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", ping);
+    };
+  }, [user]);
+
   const signOut = async () => {
     await queryClient.cancelQueries();
     queryClient.clear();

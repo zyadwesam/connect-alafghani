@@ -24,3 +24,14 @@ export function extractHashtags(text: string): string[] {
   const matches = text.match(/#[\p{L}\p{N}_]+/gu) ?? [];
   return Array.from(new Set(matches.map((m) => m.slice(1).toLowerCase())));
 }
+
+export function isOnline(iso: string | null | undefined): boolean {
+  if (!iso) return false;
+  return Date.now() - new Date(iso).getTime() < 2 * 60 * 1000;
+}
+
+export function presenceLabel(iso: string | null | undefined): string {
+  if (!iso) return "غير متصل";
+  if (isOnline(iso)) return "نشط الآن";
+  return `آخر ظهور ${timeAgo(iso)}`;
+}

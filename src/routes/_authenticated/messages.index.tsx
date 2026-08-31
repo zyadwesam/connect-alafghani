@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { UserAvatar } from "@/components/user-avatar";
 import { RowSkeleton } from "@/components/skeletons";
 import { EmptyState } from "@/components/empty-state";
-import { timeAgo } from "@/lib/format";
+import { presenceLabel, isOnline, timeAgo } from "@/lib/format";
 import type { Message, Profile } from "@/lib/types";
 
 export const Route = createFileRoute("/_authenticated/messages/")({
@@ -28,6 +28,7 @@ type Row = {
   avatar: string | null;
   lastMessage: Message | null;
   unread: number;
+  lastSeen: string | null;
 };
 
 function MessagesPage() {
@@ -39,7 +40,9 @@ function MessagesPage() {
     if (!user) return;
     const { data: parts } = await supabase
       .from("conversation_participants")
-      .select("conversation_id, last_read_at, conversations!inner(id, is_group, group_name, group_avatar_url, last_message_at)")
+      .select(
+        "conversation_id, last_read_at, conversations!inner(id, is_group, group_name, group_avatar_url, last_message_at)",
+      )
       .eq("user_id", user.id);
 
     const list: Row[] = [];
@@ -66,6 +69,7 @@ function MessagesPage() {
 
       let title = conv.group_name ?? "محادثة";
       let avatar: string | null = conv.group_avatar_url;
+      let lastSeen: string | null = null;
       if (!conv.is_group) {
         const { data: others } = await supabase
           .from("conversation_participants")
@@ -82,6 +86,7 @@ function MessagesPage() {
           const p = prof as Profile | null;
           title = p?.full_name || p?.username || "مستخدم";
           avatar = p?.avatar_url ?? null;
+          lastSeen = p?.last_seen_at ?? null;
         }
       }
 
@@ -92,6 +97,7 @@ function MessagesPage() {
         avatar,
         lastMessage: (lastMsgs?.[0] as Message | undefined) ?? null,
         unread: count ?? 0,
+        lastSeen,
       });
     }
 
@@ -109,7 +115,11 @@ function MessagesPage() {
     if (!user) return;
     const channel = supabase
       .channel("messages-list")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, () => void load())
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "messages" },
+        () => void load(),
+      )
       .subscribe();
     return () => {
       void supabase.removeChannel(channel);
@@ -139,9 +149,25 @@ function MessagesPage() {
             params={{ id: row.id }}
             className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border bg-card p-3 transition-colors active:bg-accent/60 hover:bg-accent/40"
           >
-            <UserAvatar src={row.avatar} name={row.title} className="size-14 shrink-0 md:size-12" />
+            <div className="relative shrink-0">
+              <UserAvatar src={row.avatar} name={row.title} className="size-14 md:size-12" />
+              {!row.isGroup && isOnline(row.lastSeen) ? (
+                <span className="absolute bottom-0 end-0 size-3.5 rounded-full border-2 border-card bg-emerald-500" />
+              ) : null}
+            </div>
             <div className="min-w-0">
               <p className="truncate text-[15px] font-bold">{row.title}</p>
+              {!row.isGroup ? (
+                <p
+                  className={`truncate text-[11px] ${
+                    isOnline(row.lastSeen)
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {presenceLabel(row.lastSeen)}
+                </p>
+              ) : null}
               <p
                 className={`truncate text-xs ${
                   row.unread > 0 ? "font-semibold text-foreground" : "text-muted-foreground"

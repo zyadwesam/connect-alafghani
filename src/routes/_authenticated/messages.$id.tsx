@@ -10,6 +10,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { presenceLabel, isOnline } from "@/lib/format";
 import type { Message, Profile } from "@/lib/types";
 
 export const Route = createFileRoute("/_authenticated/messages/$id")({
@@ -78,7 +79,12 @@ function ChatPage() {
       .channel(`conversation-${id}`, { config: { presence: { key: user.id } } })
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "messages", filter: `conversation_id=eq.${id}` },
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${id}`,
+        },
         (payload) => setMessages((prev) => [...prev, payload.new as Message]),
       )
       .on("broadcast", { event: "typing" }, ({ payload }) => {
@@ -94,6 +100,23 @@ function ChatPage() {
       channelRef.current = null;
     };
   }, [id, user]);
+
+  const participantIds = participants
+    .map((p) => p.user_id)
+    .sort()
+    .join(",");
+
+  useEffect(() => {
+    if (!user) return;
+    const ids = participantIds ? participantIds.split(",") : [];
+    if (!ids.length) return;
+    const refresh = async () => {
+      const { data } = await supabase.from("profiles").select("*").in("user_id", ids);
+      if (data) setParticipants(data);
+    };
+    const timer = setInterval(() => void refresh(), 45_000);
+    return () => clearInterval(timer);
+  }, [user, participantIds]);
 
   useEffect(() => {
     bottom.current?.scrollIntoView({ behavior: "smooth" });
@@ -144,12 +167,27 @@ function ChatPage() {
             <ChevronRight className="size-5" />
           </Button>
         </Link>
-        <UserAvatar src={other?.avatar_url} name={other?.full_name} className="size-10" />
+        <div className="relative shrink-0">
+          <UserAvatar src={other?.avatar_url} name={other?.full_name} className="size-10" />
+          {isOnline(other?.last_seen_at) ? (
+            <span className="absolute bottom-0 end-0 size-3 rounded-full border-2 border-card bg-emerald-500" />
+          ) : null}
+        </div>
         <div className="min-w-0">
           <p className="truncate text-sm font-bold">
             {other?.full_name || other?.username || "محادثة"}
           </p>
-          <p className="h-4 truncate text-xs text-primary">{typing ? `${typing} يكتب...` : ""}</p>
+          <p
+            className={`h-4 truncate text-xs ${
+              typing
+                ? "text-primary"
+                : isOnline(other?.last_seen_at)
+                  ? "text-emerald-600 dark:text-emerald-400"
+                  : "text-muted-foreground"
+            }`}
+          >
+            {typing ? `${typing} يكتب...` : other ? presenceLabel(other.last_seen_at) : ""}
+          </p>
         </div>
       </header>
 
@@ -226,7 +264,12 @@ function ChatPage() {
           }}
           placeholder="اكتب رسالة..."
         />
-        <Button size="icon" className="size-11 shrink-0 rounded-full" onClick={() => void send()} aria-label="إرسال">
+        <Button
+          size="icon"
+          className="size-11 shrink-0 rounded-full"
+          onClick={() => void send()}
+          aria-label="إرسال"
+        >
           <Send className="size-4" />
         </Button>
       </div>
