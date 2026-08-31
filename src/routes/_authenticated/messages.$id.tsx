@@ -96,17 +96,19 @@ function ChatPage() {
     };
   }, [id, user]);
 
+  const participantIds = participants.map((p) => p.user_id).sort().join(",");
+
   useEffect(() => {
     if (!user) return;
+    const ids = participantIds ? participantIds.split(",") : [];
+    if (!ids.length) return;
     const refresh = async () => {
-      const ids = participants.map((p) => p.user_id);
-      if (!ids.length) return;
       const { data } = await supabase.from("profiles").select("*").in("user_id", ids);
       if (data) setParticipants(data);
     };
     const timer = setInterval(() => void refresh(), 45_000);
     return () => clearInterval(timer);
-  }, [user, participants]);
+  }, [user, participantIds]);
 
   useEffect(() => {
     bottom.current?.scrollIntoView({ behavior: "smooth" });
