@@ -87,13 +87,13 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 border-b bg-card/85 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">
-          <Link to="/feed" className="text-xl font-extrabold text-primary">
+      <header className="safe-top sticky top-0 z-40 border-b bg-card/85 backdrop-blur">
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-1 px-3 sm:gap-2 sm:px-4">
+          <Link to="/feed" className="shrink-0 text-xl font-extrabold text-primary">
             وصل
           </Link>
-          <div className="flex-1" />
-          <Link to="/notifications" className="relative">
+          <div className="min-w-0 flex-1" />
+          <Link to="/notifications" className="relative shrink-0">
             <Button variant="ghost" size="icon" aria-label="الإشعارات">
               <Bell className="size-5" />
             </Button>
@@ -103,31 +103,70 @@ export function AppShell({ children }: { children: ReactNode }) {
               </span>
             ) : null}
           </Link>
-          <ThemeToggle />
-          {isAdmin ? (
-            <Link to="/admin">
-              <Button variant="ghost" size="icon" aria-label="لوحة الإدارة">
-                <Shield className="size-5" />
+          <div className="hidden shrink-0 items-center gap-1 sm:flex">
+            <ThemeToggle />
+            {isAdmin ? (
+              <Link to="/admin">
+                <Button variant="ghost" size="icon" aria-label="لوحة الإدارة">
+                  <Shield className="size-5" />
+                </Button>
+              </Link>
+            ) : null}
+            <Link to="/settings">
+              <Button variant="ghost" size="icon" aria-label="الإعدادات">
+                <Settings className="size-5" />
               </Button>
             </Link>
-          ) : null}
-          <Link to="/settings">
-            <Button variant="ghost" size="icon" aria-label="الإعدادات">
-              <Settings className="size-5" />
+            <Button variant="ghost" size="icon" aria-label="تسجيل الخروج" onClick={signOut}>
+              <LogOut className="size-5" />
             </Button>
-          </Link>
-          <Button variant="ghost" size="icon" aria-label="تسجيل الخروج" onClick={signOut}>
-            <LogOut className="size-5" />
-          </Button>
+          </div>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className="sm:hidden">
+              <Button variant="ghost" size="icon" aria-label="المزيد">
+                <MoreHorizontal className="size-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              {profile ? (
+                <DropdownMenuItem asChild>
+                  <Link to="/u/$username" params={{ username: profile.username }}>
+                    <User className="size-4" /> حسابي
+                  </Link>
+                </DropdownMenuItem>
+              ) : null}
+              {isAdmin ? (
+                <DropdownMenuItem asChild>
+                  <Link to="/admin">
+                    <Shield className="size-4" /> لوحة الإدارة
+                  </Link>
+                </DropdownMenuItem>
+              ) : null}
+              <DropdownMenuItem asChild>
+                <Link to="/settings">
+                  <Settings className="size-4" /> الإعدادات
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => void signOut()}>
+                <LogOut className="size-4" /> تسجيل الخروج
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {profile ? (
-            <Link to="/u/$username" params={{ username: profile.username }}>
-              <UserAvatar src={profile.avatar_url} name={profile.full_name} className="size-9" />
+            <Link to="/u/$username" params={{ username: profile.username }} className="shrink-0">
+              <UserAvatar
+                src={profile.avatar_url}
+                name={profile.full_name}
+                className="size-8 sm:size-9"
+              />
             </Link>
           ) : null}
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-6xl gap-6 px-4 pb-24 pt-4 md:pb-8">
+      <div className="mx-auto flex w-full max-w-6xl gap-6 overflow-x-hidden px-3 pb-[calc(4.5rem+env(safe-area-inset-bottom))] pt-4 sm:px-4 md:pb-8">
         <aside className="sticky top-20 hidden h-fit w-56 shrink-0 md:block">
           <nav className="space-y-1">
             {navItems.map((item) => (
