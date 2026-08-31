@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Heart, Loader2, Send, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +9,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { timeAgo } from "@/lib/format";
-import type { CommentWithAuthor } from "@/lib/types";
+import type { CommentWithAuthor, Profile } from "@/lib/types";
+
+function CommentText({ content }: { content: string }) {
+  const parts = content.split(/(@[\p{L}\p{N}_]+)/gu);
+  return (
+    <p className="text-sm whitespace-pre-wrap">
+      {parts.map((part, i) =>
+        part.startsWith("@") ? (
+          <Link
+            key={i}
+            to="/u/$username"
+            params={{ username: part.slice(1) }}
+            className="font-semibold text-primary hover:underline"
+          >
+            {part}
+          </Link>
+        ) : (
+          <span key={i}>{part}</span>
+        ),
+      )}
+    </p>
+  );
+}
 
 export function CommentsDialog({
   postId,
@@ -27,6 +50,7 @@ export function CommentsDialog({
   const [text, setText] = useState("");
   const [replyTo, setReplyTo] = useState<CommentWithAuthor | null>(null);
   const [likedIds, setLikedIds] = useState<string[]>([]);
+  const [mentionResults, setMentionResults] = useState<Profile[]>([]);
 
   const load = async () => {
     setLoading(true);
@@ -64,9 +88,30 @@ export function CommentsDialog({
       return;
     }
     setText("");
+    setMentionResults([]);
     setReplyTo(null);
     onChanged?.();
     void load();
+  };
+
+  const onTextChange = async (value: string) => {
+    setText(value);
+    const match = /(?:^|\s)@([\p{L}\p{N}_]{1,20})$/u.exec(value);
+    if (!match) {
+      setMentionResults([]);
+      return;
+    }
+    const { data } = await supabase
+      .from("profiles")
+      .select("*")
+      .ilike("username", `${match[1]}%`)
+      .limit(5);
+    setMentionResults(data ?? []);
+  };
+
+  const pickMention = (username: string) => {
+    setText((prev) => prev.replace(/@[\p{L}\p{N}_]{1,20}$/u, `@${username} `));
+    setMentionResults([]);
   };
 
   const toggleLike = async (id: string) => {
@@ -96,7 +141,7 @@ export function CommentsDialog({
         <div className="flex-1">
           <div className="rounded-2xl bg-muted px-3 py-2">
             <p className="text-xs font-bold">{c.profiles?.full_name || c.profiles?.username}</p>
-            <p className="text-sm">{c.content}</p>
+            <CommentText content={c.content} />
           </div>
           <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
             <span>{timeAgo(c.created_at)}</span>
@@ -108,7 +153,14 @@ export function CommentsDialog({
               />
               {c.likes_count}
             </button>
-            <button onClick={() => setReplyTo(c)}>رد</button>
+            <button
+              onClick={() => {
+                setReplyTo(c);
+                if (c.profiles?.username) setText((prev) => (prev.includes(`@${c.profiles!.username}`) ? prev : `@${c.profiles!.username} ${prev}`));
+              }}
+            >
+              رد
+            </button>
             {c.user_id === user?.id ? (
               <button onClick={() => remove(c.id)} className="text-destructive">
                 <Trash2 className="size-3.5" />
@@ -147,10 +199,26 @@ export function CommentsDialog({
               </button>
             </p>
           ) : null}
+          {mentionResults.length ? (
+            <div className="mb-2 overflow-hidden rounded-xl border bg-card">
+              {mentionResults.map((m) => (
+                <button
+                  key={m.user_id}
+                  type="button"
+                  onClick={() => pickMention(m.username)}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-start hover:bg-accent"
+                >
+                  <UserAvatar src={m.avatar_url} name={m.full_name} className="size-7" />
+                  <span className="text-sm font-semibold">{m.full_name || m.username}</span>
+                  <span className="text-xs text-muted-foreground">@{m.username}</span>
+                </button>
+              ))}
+            </div>
+          ) : null}
           <div className="flex gap-2">
             <Input
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => void onTextChange(e.target.value)}
               placeholder="اكتب تعليقًا..."
               onKeyDown={(e) => {
                 if (e.key === "Enter") void send();
