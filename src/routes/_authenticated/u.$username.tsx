@@ -117,19 +117,19 @@ function ProfilePage() {
   return (
     <div className="space-y-4">
       <div className="overflow-hidden rounded-2xl border bg-card">
-        <div className="h-36 bg-accent">
+        <div className="h-28 bg-accent sm:h-36">
           {coverUrl ? (
             <img src={coverUrl} alt="صورة الغلاف" className="size-full object-cover" />
           ) : null}
         </div>
-        <div className="px-4 pb-4">
-          <div className="-mt-10 flex items-end justify-between">
+        <div className="px-3 pb-4 sm:px-4">
+          <div className="-mt-10 flex flex-wrap items-end justify-between gap-2">
             <UserAvatar
               src={profile.avatar_url}
               name={profile.full_name}
-              className="size-20 border-4 border-card"
+              className="size-16 shrink-0 border-4 border-card sm:size-20"
             />
-            <div className="flex gap-2">
+            <div className="flex flex-wrap items-center justify-end gap-2">
               {mine ? (
                 <EditProfileDialog
                   profile={profile}
