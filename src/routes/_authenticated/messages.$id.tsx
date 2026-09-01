@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ChevronRight, ImagePlus, Send } from "lucide-react";
+import { Check, CheckCheck, ChevronRight, ImagePlus, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -85,7 +85,27 @@ function ChatPage() {
           table: "messages",
           filter: `conversation_id=eq.${id}`,
         },
-        (payload) => setMessages((prev) => [...prev, payload.new as Message]),
+        (payload) => {
+          const msg = payload.new as Message;
+          setMessages((prev) => [...prev, msg]);
+          // المحادثة مفتوحة — علّم الرسالة الواردة كمقروءة فورًا
+          if (msg.sender_id !== user.id && !msg.is_read) {
+            void supabase.from("messages").update({ is_read: true }).eq("id", msg.id);
+          }
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${id}`,
+        },
+        (payload) => {
+          const msg = payload.new as Message;
+          setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m)));
+        },
       )
       .on("broadcast", { event: "typing" }, ({ payload }) => {
         const data = payload as { userId: string; name: string };
@@ -220,11 +240,25 @@ function ChatPage() {
                       <MediaImage src={m.media_url} alt="مرفق" className="max-h-64 rounded-xl" />
                     )
                   ) : (
-                    <p className="whitespace-pre-wrap">{m.content}</p>
+                    <p dir="auto" className="whitespace-pre-wrap text-right">
+                      {m.content}
+                    </p>
                   )}
                   {mine ? (
-                    <span className="mt-1 block text-[10px] opacity-70">
-                      {m.is_read ? "تم القراءة ✓✓" : "تم الإرسال ✓"}
+                    <span
+                      className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
+                        m.is_read ? "text-sky-300" : "opacity-70"
+                      }`}
+                    >
+                      {m.is_read ? (
+                        <>
+                          <CheckCheck className="size-3.5" /> تم القراءة
+                        </>
+                      ) : (
+                        <>
+                          <Check className="size-3.5" /> تم الإرسال
+                        </>
+                      )}
                     </span>
                   ) : null}
                 </div>

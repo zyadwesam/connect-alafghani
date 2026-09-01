@@ -163,8 +163,14 @@ function ProfilePage() {
               <Lock className="size-4 shrink-0 text-muted-foreground" />
             ) : null}
           </h1>
-          <p className="truncate text-sm text-muted-foreground">@{profile.username}</p>
-          {profile.bio ? <p className="mt-2 break-words text-sm">{profile.bio}</p> : null}
+          <p className="truncate text-sm text-muted-foreground">
+            <span dir="ltr" className="inline-block">
+              @{profile.username}
+            </span>
+          </p>
+          {profile.bio ? (
+            <p className="mt-2 break-words text-right text-sm">{profile.bio}</p>
+          ) : null}
 
           <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
             <span>
