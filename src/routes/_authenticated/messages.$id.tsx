@@ -240,11 +240,25 @@ function ChatPage() {
                       <MediaImage src={m.media_url} alt="مرفق" className="max-h-64 rounded-xl" />
                     )
                   ) : (
-                    <p className="whitespace-pre-wrap">{m.content}</p>
+                    <p dir="auto" className="whitespace-pre-wrap text-right">
+                      {m.content}
+                    </p>
                   )}
                   {mine ? (
-                    <span className="mt-1 block text-[10px] opacity-70">
-                      {m.is_read ? "تم القراءة ✓✓" : "تم الإرسال ✓"}
+                    <span
+                      className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
+                        m.is_read ? "text-sky-300" : "opacity-70"
+                      }`}
+                    >
+                      {m.is_read ? (
+                        <>
+                          <CheckCheck className="size-3.5" /> تم القراءة
+                        </>
+                      ) : (
+                        <>
+                          <Check className="size-3.5" /> تم الإرسال
+                        </>
+                      )}
                     </span>
                   ) : null}
                 </div>
