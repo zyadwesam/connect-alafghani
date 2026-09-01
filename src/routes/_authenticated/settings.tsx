@@ -104,9 +104,9 @@ function SettingsPage() {
 
       <section className="space-y-3 rounded-2xl border bg-card p-4">
         <h2 className="font-bold">الخصوصية</h2>
-        <div className="flex items-center justify-between">
-          <Label htmlFor="priv">حساب خاص (يحتاج موافقة على طلبات المتابعة)</Label>
-          <Switch id="priv" checked={profile?.is_private ?? false} onCheckedChange={setPrivacy} />
+        <div className="flex items-center justify-between gap-3">
+          <Label htmlFor="priv" className="text-sm leading-snug">حساب خاص (يحتاج موافقة على طلبات المتابعة)</Label>
+          <Switch id="priv" className="shrink-0" checked={profile?.is_private ?? false} onCheckedChange={setPrivacy} />
         </div>
         <div className="space-y-1.5">
           <Label>من يمكنه التعليق على منشوراتك</Label>
@@ -144,7 +144,7 @@ function SettingsPage() {
           blocked.map((p) => (
             <div key={p.id} className="flex items-center gap-3 rounded-xl border p-3">
               <UserAvatar src={p.avatar_url} name={p.full_name} className="size-10" />
-              <span className="flex-1 text-sm font-bold">@{p.username}</span>
+              <span className="min-w-0 flex-1 truncate text-sm font-bold">@{p.username}</span>
               <Button size="sm" variant="outline" onClick={() => unblock(p.user_id)}>
                 إلغاء الحظر
               </Button>

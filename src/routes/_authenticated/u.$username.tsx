@@ -184,7 +184,11 @@ function ProfilePage() {
       </div>
 
       <Tabs defaultValue="posts">
-        <TabsList className={mine ? "grid w-full grid-cols-4" : "grid w-full grid-cols-3"}>
+        <TabsList
+          className={
+            (mine ? "grid w-full grid-cols-4" : "grid w-full grid-cols-3") + " h-11 text-xs sm:text-sm"
+          }
+        >
           <TabsTrigger value="posts">المنشورات</TabsTrigger>
           <TabsTrigger value="reels">الريلز</TabsTrigger>
           <TabsTrigger value="media">الوسائط</TabsTrigger>

@@ -96,7 +96,7 @@ function AdminPage() {
     <div className="space-y-5">
       <h1 className="text-xl font-extrabold">لوحة الإدارة</h1>
 
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {[
           { label: "المستخدمون", value: stats.users },
           { label: "المنشورات", value: stats.posts },
@@ -117,8 +117,8 @@ function AdminPage() {
           <EmptyState icon={ShieldAlert} title="لا توجد بلاغات" />
         ) : (
           reports.map((r) => (
-            <div key={r.id} className="flex items-center gap-3 rounded-xl border bg-card p-3 text-sm">
-              <div className="flex-1">
+            <div key={r.id} className="flex flex-wrap items-center gap-2 rounded-xl border bg-card p-3 text-sm">
+              <div className="min-w-0 flex-1 basis-full sm:basis-auto">
                 <p className="font-bold">
                   {r.target_type} · {r.reason}
                 </p>
@@ -144,9 +144,9 @@ function AdminPage() {
       <section className="space-y-3">
         <h2 className="font-bold">المستخدمون</h2>
         {users.map((p) => (
-          <div key={p.id} className="flex items-center gap-3 rounded-xl border bg-card p-3 text-sm">
-            <div className="flex-1">
-              <p className="font-bold">
+          <div key={p.id} className="flex flex-wrap items-center gap-2 rounded-xl border bg-card p-3 text-sm">
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-bold">
                 {p.full_name || p.username} <span className="text-muted-foreground">@{p.username}</span>
               </p>
               <p className="text-xs text-muted-foreground">
