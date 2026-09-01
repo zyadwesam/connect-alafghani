@@ -154,15 +154,19 @@ function ProfilePage() {
             </div>
           </div>
 
-          <h1 className="mt-3 flex items-center gap-1.5 text-lg font-extrabold">
-            {profile.full_name || profile.username}
-            {profile.is_verified ? <ShieldCheck className="size-4 text-primary" /> : null}
-            {profile.is_private ? <Lock className="size-4 text-muted-foreground" /> : null}
+          <h1 className="mt-3 flex min-w-0 items-center gap-1.5 text-lg font-extrabold">
+            <span className="truncate">{profile.full_name || profile.username}</span>
+            {profile.is_verified ? (
+              <ShieldCheck className="size-4 shrink-0 text-primary" />
+            ) : null}
+            {profile.is_private ? (
+              <Lock className="size-4 shrink-0 text-muted-foreground" />
+            ) : null}
           </h1>
-          <p className="text-sm text-muted-foreground">@{profile.username}</p>
-          {profile.bio ? <p className="mt-2 text-sm">{profile.bio}</p> : null}
+          <p className="truncate text-sm text-muted-foreground">@{profile.username}</p>
+          {profile.bio ? <p className="mt-2 break-words text-sm">{profile.bio}</p> : null}
 
-          <div className="mt-3 flex gap-5 text-sm">
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
             <span>
               <b>{formatCount(profile.posts_count)}</b>{" "}
               <span className="text-muted-foreground">منشور</span>
