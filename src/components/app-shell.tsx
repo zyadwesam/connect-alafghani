@@ -6,11 +6,18 @@ import {
   Home,
   LogOut,
   MessageCircle,
+  MoreHorizontal,
   Search,
   Settings,
   Shield,
   User,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
