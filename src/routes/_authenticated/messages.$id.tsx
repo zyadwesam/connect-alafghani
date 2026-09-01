@@ -85,7 +85,27 @@ function ChatPage() {
           table: "messages",
           filter: `conversation_id=eq.${id}`,
         },
-        (payload) => setMessages((prev) => [...prev, payload.new as Message]),
+        (payload) => {
+          const msg = payload.new as Message;
+          setMessages((prev) => [...prev, msg]);
+          // المحادثة مفتوحة — علّم الرسالة الواردة كمقروءة فورًا
+          if (msg.sender_id !== user.id && !msg.is_read) {
+            void supabase.from("messages").update({ is_read: true }).eq("id", msg.id);
+          }
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "messages",
+          filter: `conversation_id=eq.${id}`,
+        },
+        (payload) => {
+          const msg = payload.new as Message;
+          setMessages((prev) => prev.map((m) => (m.id === msg.id ? { ...m, ...msg } : m)));
+        },
       )
       .on("broadcast", { event: "typing" }, ({ payload }) => {
         const data = payload as { userId: string; name: string };
