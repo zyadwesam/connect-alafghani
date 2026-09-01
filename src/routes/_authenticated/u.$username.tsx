@@ -117,19 +117,19 @@ function ProfilePage() {
   return (
     <div className="space-y-4">
       <div className="overflow-hidden rounded-2xl border bg-card">
-        <div className="h-36 bg-accent">
+        <div className="h-28 bg-accent sm:h-36">
           {coverUrl ? (
             <img src={coverUrl} alt="صورة الغلاف" className="size-full object-cover" />
           ) : null}
         </div>
-        <div className="px-4 pb-4">
-          <div className="-mt-10 flex items-end justify-between">
+        <div className="px-3 pb-4 sm:px-4">
+          <div className="-mt-10 flex flex-wrap items-end justify-between gap-2">
             <UserAvatar
               src={profile.avatar_url}
               name={profile.full_name}
-              className="size-20 border-4 border-card"
+              className="size-16 shrink-0 border-4 border-card sm:size-20"
             />
-            <div className="flex gap-2">
+            <div className="flex flex-wrap items-center justify-end gap-2">
               {mine ? (
                 <EditProfileDialog
                   profile={profile}
@@ -154,15 +154,19 @@ function ProfilePage() {
             </div>
           </div>
 
-          <h1 className="mt-3 flex items-center gap-1.5 text-lg font-extrabold">
-            {profile.full_name || profile.username}
-            {profile.is_verified ? <ShieldCheck className="size-4 text-primary" /> : null}
-            {profile.is_private ? <Lock className="size-4 text-muted-foreground" /> : null}
+          <h1 className="mt-3 flex min-w-0 items-center gap-1.5 text-lg font-extrabold">
+            <span className="truncate">{profile.full_name || profile.username}</span>
+            {profile.is_verified ? (
+              <ShieldCheck className="size-4 shrink-0 text-primary" />
+            ) : null}
+            {profile.is_private ? (
+              <Lock className="size-4 shrink-0 text-muted-foreground" />
+            ) : null}
           </h1>
-          <p className="text-sm text-muted-foreground">@{profile.username}</p>
-          {profile.bio ? <p className="mt-2 text-sm">{profile.bio}</p> : null}
+          <p className="truncate text-sm text-muted-foreground">@{profile.username}</p>
+          {profile.bio ? <p className="mt-2 break-words text-sm">{profile.bio}</p> : null}
 
-          <div className="mt-3 flex gap-5 text-sm">
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
             <span>
               <b>{formatCount(profile.posts_count)}</b>{" "}
               <span className="text-muted-foreground">منشور</span>
@@ -180,7 +184,11 @@ function ProfilePage() {
       </div>
 
       <Tabs defaultValue="posts">
-        <TabsList className={mine ? "grid w-full grid-cols-4" : "grid w-full grid-cols-3"}>
+        <TabsList
+          className={
+            (mine ? "grid w-full grid-cols-4" : "grid w-full grid-cols-3") + " h-11 text-xs sm:text-sm"
+          }
+        >
           <TabsTrigger value="posts">المنشورات</TabsTrigger>
           <TabsTrigger value="reels">الريلز</TabsTrigger>
           <TabsTrigger value="media">الوسائط</TabsTrigger>

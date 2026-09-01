@@ -6,11 +6,18 @@ import {
   Home,
   LogOut,
   MessageCircle,
+  MoreHorizontal,
   Search,
   Settings,
   Shield,
   User,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
@@ -198,14 +205,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main className="min-w-0 flex-1">{children}</main>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 backdrop-blur md:hidden">
-        <div className="flex items-center justify-around py-1.5">
+      <nav className="safe-bottom fixed inset-x-0 bottom-0 z-40 border-t bg-card/95 backdrop-blur md:hidden">
+        <div className="grid grid-cols-5 items-center py-1">
           {navItems.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               className={cn(
-                "flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold text-muted-foreground",
+                "flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-lg px-1 text-[10px] font-semibold text-muted-foreground",
                 pathname.startsWith(item.to) && "text-primary",
               )}
             >
